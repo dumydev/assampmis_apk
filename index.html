@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Download APK</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #f9f9f9;
+      color: #333;
+      text-align: center;
+      padding: 50px;
+    }
+    .container {
+      background: white;
+      max-width: 400px;
+      margin: 0 auto;
+      padding: 30px 20px;
+      border-radius: 8px;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+    }
+    h1 {
+      margin-bottom: 20px;
+      font-weight: 600;
+    }
+    p {
+      font-size: 16px;
+      margin-bottom: 20px;
+    }
+    p#version-info {
+      font-size: 14px;
+      color: #666;
+      margin-bottom: 30px;
+    }
+    a.download-btn {
+      display: inline-block;
+      background-color: #007bff;
+      color: white;
+      padding: 15px 30px;
+      border-radius: 5px;
+      text-decoration: none;
+      font-size: 18px;
+      font-weight: 600;
+      transition: background-color 0.3s ease;
+      cursor: pointer;
+      pointer-events: none;
+      opacity: 0.6;
+    }
+    a.download-btn:hover {
+      background-color: #0056b3;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>Assam PMIS App</h1>
+    <p>Click the button below to download the latest version of the app</p>
+    <p id="version-info">Loading version info...</p>
+    <a class="download-btn" id="download-link" href="#" download>Loading...</a>
+  </div>
+
+  <script>
+    fetch('version.json')
+      .then(response => {
+        if (!response.ok) {
+          throw new Error('Network response was not OK');
+        }
+        return response.json();
+      })
+      .then(config => {
+        const downloadUrl = `https://drive.google.com/uc?export=download&id=${config.fileId}`;
+        const dlBtn = document.getElementById('download-link');
+        dlBtn.href = downloadUrl;
+        dlBtn.textContent = `Download APK v${config.version_name}`;
+        dlBtn.style.pointerEvents = 'auto';
+        dlBtn.style.opacity = '1';
+
+        document.getElementById('version-info').textContent = `Version: ${config.version_name} | Updated at: ${config.updatedAt}`;
+      })
+      .catch(error => {
+        console.error('Failed to load version.json:', error);
+        document.getElementById('version-info').textContent = 'Version info could not be loaded.';
+        const dlBtn = document.getElementById('download-link');
+        dlBtn.textContent = 'Download not available';
+        dlBtn.style.pointerEvents = 'none';
+        dlBtn.style.opacity = '0.5';
+      });
+  </script>
+</body>
+</html>
